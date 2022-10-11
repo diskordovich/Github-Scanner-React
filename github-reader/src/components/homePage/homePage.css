@@ -1,0 +1,20 @@
+
+.mainDiv{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.mainDiv > * {
+    display: flex;
+}
+
+.inputForm {
+    flex-direction: column;
+}
+
+.inputForm>button{
+    margin-top: 20px;
+}
