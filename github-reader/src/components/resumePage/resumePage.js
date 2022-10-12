@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import RepoInfo from "./repoInfoTable/repoInfo";
 
 
 export default function ResumePage() {
     let {id} = useParams()
+    const [loadStatus, setLoadStatus] = useState("LOADING")
     const [requestVal, setRequestVal] = useState();
     const [userRepos, setUserRepos] = useState();
     const [userLangs, setUserLangs] = useState();
@@ -12,7 +14,7 @@ export default function ResumePage() {
         fetch("https://api.github.com/users/"+id,{
             headers:{
                 "Accept": "application/vnd.github+json",
-                "Authorization": "Bearer " + "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"
+                "Authorization": "Bearer " + "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"
             },
             username:id
         }).then((res)=>{
@@ -22,23 +24,33 @@ export default function ResumePage() {
             setRequestVal(result)
         })
         .catch((error)=>{
+            setLoadStatus("ERROR")
             console.log(error)
         })
 
 
         fetch("https://api.github.com/users/"+id+"/repos",{
-            auth:"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",
             username:id,
             headers:{
                 "Accept": "application/vnd.github+json",
-                "Authorization": "Bearer " + "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"
+                "Authorization": "Bearer " + "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"
             }
         }).then((res)=>{
             if (res.status!==200) throw new Error("User not found")
             return res
         }).then(res => res.json()).then((res)=>{
-            setUserRepos(res)
-            console.log(res)
+            let sortedList = res
+            sortedList.sort((a,b)=>{
+                let dateA = new Date(a.created_at)
+                let dateB = new Date(b.created_at)
+                
+                if (dateA < dateB) return 1
+                else if (dateA > dateB) return -1
+                else return 0
+            })
+            console.log(sortedList)
+            setUserRepos(sortedList)
+            //console.log(res)
             return res
         }).then((res)=>{
             let newLangArr = new Map()
@@ -49,9 +61,7 @@ export default function ResumePage() {
                     fetch(element.languages_url)
                     .then(result=> result.json())
                     .then((result)=>{
-                        console.log(result)
                         for(let [key, val] of Object.entries(result)){
-                            console.log(key + " " + Number(val))
                             langDataArr.push([key,val])
                         }
                     })
@@ -59,7 +69,6 @@ export default function ResumePage() {
                 )
             })
             Promise.all(promiseArr).then(()=>{
-                console.log(langDataArr)
                 let total = 0;
                 langDataArr.forEach(([key,val])=>{
                     total+=val
@@ -75,8 +84,8 @@ export default function ResumePage() {
                 for(let [key, val] of newLangArr){
                     newLangArr.set(key,(newLangArr.get(key)/total*100).toFixed(2))
                 }
-                console.log(newLangArr)
                 setUserLangs(newLangArr)
+                setLoadStatus("DONE")
             })
             
         })
@@ -85,22 +94,21 @@ export default function ResumePage() {
         })
     },[])
 
-    React.useEffect(()=>{
-        console.log(requestVal)
-    })
-
-    React.useEffect(()=>{
-        console.log(userLangs)
-    },[userLangs])
 
     return(
-        requestVal?<div>
+        loadStatus=="DONE"?<div>
             <h1>{requestVal.name}</h1>
             <p>Member since: {requestVal.created_at.slice(0,4)}</p>
             <p>Owns {userRepos? userRepos.length:"Loading!"} repositories</p>
-            {userLangs?Array.from(userLangs, ([key, val])=>{return <p key={key}>{key}:{val}</p>}):""}
+            {userLangs?Array.from(userLangs, ([key, val])=>{return <p key={key}>{key}:{val}%</p>}):""}
+            {userRepos?userRepos.slice(0,9).map((repoData)=>{
+                return <RepoInfo key={repoData.name} props={repoData}></RepoInfo>
+            }):""}
+
+            
         </div>
-        :
-        <p>Loading!</p>
+        :loadStatus=="LOADING"?
+        <p>Loading!</p>:
+        <p>User not found</p>
     )
 }
