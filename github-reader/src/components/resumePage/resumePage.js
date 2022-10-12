@@ -12,10 +12,6 @@ export default function ResumePage() {
 
     React.useEffect(()=>{
         fetch("https://api.github.com/users/"+id,{
-            headers:{
-                "Accept": "application/vnd.github+json",
-                "Authorization": "Bearer " + "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"
-            },
             username:id
         }).then((res)=>{
             if (res.status!==200) throw new Error("User not found")
@@ -31,10 +27,6 @@ export default function ResumePage() {
 
         fetch("https://api.github.com/users/"+id+"/repos",{
             username:id,
-            headers:{
-                "Accept": "application/vnd.github+json",
-                "Authorization": "Bearer " + "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"
-            }
         }).then((res)=>{
             if (res.status!==200) throw new Error("User not found")
             return res
