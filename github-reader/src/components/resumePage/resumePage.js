@@ -1,7 +1,6 @@
-import styled from "@emotion/styled";
-import { Grid, ListItem, Paper } from "@mui/material";
-import { Box, width } from "@mui/system";
-import React, { useState, useEffect } from "react";
+import { Grid } from "@mui/material";
+import { Box } from "@mui/system";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import RepoInfo from "./repoInfoTable/repoInfo";
 

@@ -1,8 +1,5 @@
 import React from "react";
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import "./homePage.css"
-import { redirect } from "react-router-dom";
 import NameForm from "../nameForm/nameForm";
 
 export default class HomePage extends React.Component{
