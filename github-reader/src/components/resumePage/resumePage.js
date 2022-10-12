@@ -1,7 +1,9 @@
+import styled from "@emotion/styled";
+import { Grid, ListItem, Paper } from "@mui/material";
+import { Box, width } from "@mui/system";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import RepoInfo from "./repoInfoTable/repoInfo";
-
 
 export default function ResumePage() {
     let {id} = useParams()
@@ -86,19 +88,31 @@ export default function ResumePage() {
 
 
     return(
-        loadStatus=="DONE"?<div>
-            <h1>{requestVal.name}</h1>
-            <p>Member since: {requestVal.created_at.slice(0,4)}</p>
-            <p>Owns {userRepos? userRepos.length:"Loading!"} repositories</p>
-            {userLangs?Array.from(userLangs, ([key, val])=>{return <p key={key}>{key}:{val}%</p>}):""}
-            {userRepos?userRepos.slice(0,9).map((repoData)=>{
-                return <RepoInfo key={repoData.name} props={repoData}></RepoInfo>
-            }):""}
+        <Box sx={{padding:"20px", width:"100vh-40px"}}>
+            {loadStatus=="DONE"?<Box>
+                <h1>{requestVal.name}</h1>
+                <p>Member since: {requestVal.created_at.slice(0,4)}</p>
+                <p>Owns {userRepos? userRepos.length:"Loading!"} repositories</p>
+                <Grid container>
+                    {userLangs?Array.from(userLangs, ([key, val])=>{
+                        return(
+                            <Grid item xs={4} sm={3} md={2} key={key}>    
+                                <p key={key}>{key}:{val}%</p>
+                            </Grid>
+                        )
+                    }):""
+                }
+                </Grid>
+                
+                {userRepos?userRepos.slice(0,9).map((repoData)=>{
+                    return <RepoInfo key={repoData.name} props={repoData}></RepoInfo>
+                }):""}
 
-            
-        </div>
-        :loadStatus=="LOADING"?
-        <p>Loading!</p>:
-        <p>User not found</p>
+                
+            </Box>
+            :loadStatus=="LOADING"?
+            <p>Loading!</p>:
+            <p>User not found</p>}
+        </Box>
     )
 }
