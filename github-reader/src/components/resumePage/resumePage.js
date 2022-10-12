@@ -40,9 +40,7 @@ export default function ResumePage() {
                 else if (dateA > dateB) return -1
                 else return 0
             })
-            console.log(sortedList)
             setUserRepos(sortedList)
-            //console.log(res)
             return res
         }).then((res)=>{
             let newLangArr = new Map()
